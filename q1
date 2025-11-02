@@ -1,1 +1,57 @@
 how to use aws lambda function plus event bridge schedule start and stop ec2 instances in dev env ?
+----------------1️⃣ Create IAM Role for Lambda
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+---------------------------
+2️⃣ Create Lambda Function
+import boto3
+
+def lambda_handler(event, context):
+    ec2 = boto3.client('ec2', region_name='ap-south-1')
+
+    # List of instance IDs to stop
+    instances = ['i-0123456789abcdef0', 'i-0abcd1234ef567890']
+
+    print("Stopping instances:", instances)
+    ec2.stop_instances(InstanceIds=instances)
+    print("Stopped instances successfully.")
+===========================
+3️⃣ Create EventBridge (CloudWatch) Schedule
+Go to Amazon EventBridge → Rules → Create rule
+Example 1️⃣ — for starting EC2
+Name: start-ec2-dev
+Schedule pattern (cron):
+cron(30 3 ? * MON-FRI *)  
+=====
+🧠 6️⃣ Real-Time Tip (Marathi-English mix)
+Dev env मध्ये instances full day चालवायची गरज नसते.
+Night ला बंद केल्याने AWS bill कमी होतो.
+तुम्ही tag-based logic वापरू शकता:
+e.g. फक्त "Environment=Dev" असलेल्या instances start/stop करा.
+Example (tag-based stop code):
+==============================
+import boto3
+
+def lambda_handler(event, context):
+    ec2 = boto3.resource('ec2', region_name='ap-south-1')
+    instances = ec2.instances.filter(
+        Filters=[{'Name': 'tag:Environment', 'Values': ['Dev']}]
+    )
+
+    for instance in instances:
+        instance.stop()
+        print(f"Stopping {instance.id}")
+
+===================================
