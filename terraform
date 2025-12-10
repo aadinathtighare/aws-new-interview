@@ -165,8 +165,33 @@ EC2 --> separate state --> स्वतंत्र apply
 Separate state (prod-level best practice)?
 किंवा मी तुम्हाला full folder structure देऊ का — multi-module, multi-state?
 --------------------
+Q. in terraform why we use validation block in real time ?
+--> ✅ Terraform मध्ये validation block का वापरतो?
 
+👉 User चुकीचे values देऊ नये म्हणून.
+👉 Environment-wise चुकीची configuration apply होऊ नये म्हणून.
+👉 Production मध्ये चुकीचा input देल्याने मोठा नुकसान होऊ नये म्हणून.
+----------
+Example 1: कोणी चुकीने मोठा expensive instance टाकला
 
+तू dev.tfvars मध्ये instance_type = "m5.24xlarge" टाकलास
+(हा per month खूप महाग आहे) तुला हे होऊ द्यायचंच नाही.
+
+--> तर variables.tf मध्ये validation ठेवतो:
+
+variable "instance_type" {
+  type = string
+
+  validation {
+    condition     = contains(["t2.micro", "t3.small", "t3.medium"], var.instance_type)
+    error_message = "Allowed instance types: t2.micro, t3.small, t3.medium only."
+  }
+}
+-----------------------------------
+Example 3: CIDR block चुकीचे देऊ नये
+Example 2: Environment चुकीने dev ऐवजी prod टाकू नये
+Wrong region
+--------------------
 
 
 
