@@ -73,20 +73,66 @@ terraform apply -var-file=prod.tfvars
 ➡️ NEVER put tfvars inside module
 -----------------------------------
 Q.)) so my question is why variables.tf in child module as well as in root module ?
---> 
+--> 📌 Module म्हणजे “function”
+📌 Root म्हणजे “function call”
+📌 tfvars म्हणजे “actual values”
+-----------------------------------------------------
+Q. give me variables.tf for ec2 module child module level & 
+Q. give me same variables.tf for same ec2 module call in root module
+-----------------------------------------------------
+Q. if I m declare values in dev.tfvars files and I m declare values in variables.tf 
+so here I m using modules so after terraform apply which values terraform pick for create infra ? 
+--.✔ Terraform dev.tfvars मधील value pick करेल. कारण tfvars ला जास्त priority आहे.
+-------------------------------------------------------------------------------------
+----> 📌 Order of priority (most important → least important)
+1️⃣ tfvars files (dev.tfvars, prod.tfvars)
+2️⃣ CLI -var values
+3️⃣ variables.tf मधील default values
+---------------------------------------------
+🔹 4) Root module → child module ला values pass करतो
+Root म्हणतो: “Dev.tfvars मधलं instance_type घे आणि EC2 module ला दे.”
+-----------------------------------------------------------------
+✅ Terraform मध्ये root module आणि child module दोन्ही ठिकाणी variables.tf file  का लागतात?
+--> 👉 Child module ला सांगायचं असतं की त्याला कोणते inputs लागणार
+👉 Root module ला सांगायचं असतं की कोणते values environment (dev/prod) कडून येतील
 
+🔹 1) Child Module मधलं variables.tf (module level variables)
 
-
-
-
-
-
-
-
-
-
-
-
+हा फाइल म्हणजे function चे parameters समज.
+उदा:
+तुझा EC2 module आहे, तर module म्हणतो:
+"मला instance_type, environment हे values दे! ते शिवाय मी काम करू शकत नाही."
+----------------------------------------
+variable "instance_type" {}
+variable "environment" {}
+हे module चे input parameters झाले.
+--------------------
+🔹 2) Root Module मधलं variables.tf (root level variables)
+हा फाइल म्हणजे जे values बाहेरून (dev.tfvars/prod.tfvars) येणार आहेत ते define करतो.
+Root module फक्त एवढं सांगतो:
+"माझ्याकडे instance_type नावाचा variable आहे.
+Dev, Prod environment त्याला value देतील."
+-----------------------
+variable "instance_type" {}
+variable "environment" {}
+---------------------------
+🔹 3) dev.tfvars / prod.tfvars --> इथे actual values असतात:
+instance_type = "t3.small"
+environment   = "dev"
+---------------------------
+🔹 4) Root module → child module ला values pass करतो
+Root म्हणतो: “Dev.tfvars मधलं instance_type घे आणि EC2 module ला दे.”
+-------------------------
+module "ec2" {
+  source        = "./modules/ec2"
+  instance_type = var.instance_type
+  environment   = var.environment
+}
+--------------------------------------
+👉 Module = सांगतो “मला काय पाहिजे”
+👉 Root = सांगतो “dev/prod मला values देणार”
+👉 tfvars = actual dev/prod values
+------------------------------------------------
 
 
 
