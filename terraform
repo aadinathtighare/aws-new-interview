@@ -133,10 +133,38 @@ module "ec2" {
 👉 Root = सांगतो “dev/prod मला values देणार”
 👉 tfvars = actual dev/prod values
 ------------------------------------------------
+Q. now I hv 3 modules lets say ec2, vpc, s3, so i want to call specific module so how ? 
+--> 🧠 Terraform थेट "Only EC2 module run kar" असं करू शकत नाही
+पण -target वापरून करू शकतो
+किंवा प्रत्येक module चा independent tfstate ठेवल्यास फक्त specific module apply करू शकतो
+--------------------------
+⭐ Terraform मध्ये तुम्ही specific module directly run करू शकत नाही.
+Terraform नेहमी full plan + apply चालवतो. पण आपण फक्त specific module ला affect करणारे बदल करू शकतो.
+---------------
+✔ BUT… real-time मध्ये लोक 2 methods वापरतात:
+✅ METHOD 1: फक्त त्या module चे resources apply करा (using -target)
+Terraform command:
+terraform apply -target=module.ec2
+terraform apply -target=module.s3
+terraform apply -target=module.vpc
+👉 हे Terraform ला सांगतं:
+“Plan/apply फक्त module.ec2 चा करा, बाकी ignore कर.”
+------------------------------
+✔ METHOD 2: Module-specific variable changes करून apply करणे
+उदा: फक्त EC2 module साठी बदल केले → Terraform apply
+Terraform फक्त त्या बदलांना compute करेल.
+-----------------
+✔ METHOD 3: Modules अलग tfstate मध्ये ठेवणे (Best for real companies)
+EC2 --> separate state --> स्वतंत्र apply
+# terraform init -backend-config="key=vpc.tfstate"
+# terraform init -backend-config="key=ec2.tfstate"
+-----------------------------------
+🎯 तुम्हाला कोणता method हवाय?
 
-
-
-
+-target वापरून?
+Separate state (prod-level best practice)?
+किंवा मी तुम्हाला full folder structure देऊ का — multi-module, multi-state?
+--------------------
 
 
 
