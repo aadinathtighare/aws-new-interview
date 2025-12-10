@@ -1,0 +1,95 @@
+aws configure --profile dev 
+why we create profiles ?
+--> We create AWS CLI profiles to manage multiple AWS accounts or environments from the same laptop/machine without mixing credentials.
+----
+Q. in real time we r using 1 aws account for lower env & 1 aws account for prod env? yes separate
+----------------
+Access Key ID [None]: <DEV_ACCESS_KEY>
+AWS Secret Access 
+env wise seperate keys
+--------------------------------
+Q. if i m using separate aws accounts for each env , then terraform workspaces is use in this scenario ? --> no
+--------------------------------
+aws Multi-account setup (real-time) for each env dev, prod
+------------
+terraform workspace select dev
+terraform workspace select prod
+-------------
+Q. if i m using modules so I need to create outputs.tf is under the child module or root module in terraform ?
+in both modules
+-------------
+Gitlab runner we hv to install via helm chart in our eks cluster --> So runner as a pod
+------------
+We hv docker image for gitlab runner
+Other wise u can use seperate ec2 for gitlab runner
+Jenkins agent as a pod or container for slave
+------------
+We hv onprem k8s cluster so how to setup cicd pipeline for that
+--------
+U do ci part with gitalab we have manifest files and java code
+----------------
+For ci there is no related between gitlab and k8s
+------------
+Cd part take care by argocd
+------------------------
+Kubeconfig access from the runner to the on-prem K8s cluster
+------------------------
+Install GitLab Runner on a jump server inside on-prem
+--------------------------
+EFA in AWS → Elastic Fabric Adapter
+--------------------
+Q. When your application has mixed workload types (some services need more memory, some need more CPU), the correct approach is:
+1️⃣ For Memory-Intensive Services → Use R-Series
+Examples:
+R6g, R6i, R7g, R7i
+(R = RAM optimized)
+-------------------------
+2️⃣ For Compute-Intensive Services → Use C-Series  ->
+Examples:
+C6g, C6i, C7g, C7i
+(C = Compute optimized)
+--------------------------------
+3️⃣ For balanced workloads → Use M-Series
+Examples:
+M6i, M7i, M6g
+(M = General purpose)
+---------------- family instance sizes -->
+✔ Compute-heavy → C series --> kafka 
+✔ Memory-heavy → R series --> database
+✔ Normal workloads → M series
+--------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
