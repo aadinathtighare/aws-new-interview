@@ -57,13 +57,23 @@ M6i, M7i, M6g
 ✔ Compute-heavy → C series --> kafka 
 ✔ Memory-heavy → R series --> database
 ✔ Normal workloads → M series
---------------
-
-
-
-
-
-
+---------------------------------------------
+Q. in terraform if I m using modules like ec2 vpc s3 then I need to write variables.tf & dev.tfvars files inside child module ?
+--> Only write variables.tf inside the child module. Do NOT create dev.tfvars inside the child module. tfvars belong only in the root module.
+--------------------------------------------------------
+dev/prod differ in: configuration values
+--> examples: instance size, number of nodes, tags, VPC CIDRs
+So tfvars must stay in root.
+-------------------------------------------------------
+terraform apply -var-file=dev.tfvars
+terraform apply -var-file=prod.tfvars
+-------------------------
+➡️ Child module = main.tf + variables.tf + outputs.tf
+➡️ Root module = main.tf + dev.tfvars + prod.tfvars + variables.tf
+➡️ NEVER put tfvars inside module
+-----------------------------------
+Q.)) so my question is why variables.tf in child module as well as in root module ?
+--> 
 
 
 
